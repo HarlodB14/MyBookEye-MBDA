@@ -57,7 +57,7 @@
         android:background="@color/blue"
         android:minHeight="48dp"
         android:text="@string/inloggen"
-        android:textColor="#000000"
+        android:textColor="#FFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextTextPassword" />
