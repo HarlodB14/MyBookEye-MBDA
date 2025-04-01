@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyBookEye</string>
+    <string name="title_activity_login_screen.kt">LoginScreen.kt</string>
+    <string name="title_activity_login_screen">LoginScreen</string>
 </resources>
