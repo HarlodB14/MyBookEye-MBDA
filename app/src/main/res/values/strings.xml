@@ -2,4 +2,14 @@
     <string name="app_name">MyBookEye</string>
     <string name="title_activity_login_screen.kt">LoginScreen.kt</string>
     <string name="title_activity_login_screen">LoginScreen</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_login.xml">activity_login.xml</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="login_button" />
+    <string name="app_logo">app_logo</string>
+    <string name="username_hint">\@string/username_hint\n</string>
+    <string name="password_hint">\@string/password_hint\n</string>
+    <string name="gebruikersnaam">gebruikersnaam\n</string>
+    <string name="wachtwoord">wachtwoord</string>
+    <string name="inloggen">inloggen</string>
 </resources>
