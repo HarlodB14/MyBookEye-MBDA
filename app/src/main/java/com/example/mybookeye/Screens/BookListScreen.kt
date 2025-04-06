@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.mybookeye.Controller.NavController
 import com.example.mybookeye.Model.Book
+import com.example.mybookeye.Model.SelectedBookHolder
 import com.example.mybookeye.R
 import com.example.mybookeye.Viewmodel.BookViewModel
 
@@ -55,6 +56,7 @@ import com.example.mybookeye.Viewmodel.BookViewModel
 fun BookListScreen(navController: NavController) {
     val viewModel: BookViewModel = viewModel()
     val books = viewModel.books
+
     var showSearchBar by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
@@ -164,15 +166,19 @@ fun BookListScreen(navController: NavController) {
             else -> {
                 LazyColumn(contentPadding = padding) {
                     items(books.size) { index ->
+                        val book = books[index]
                         BookRow(
-                            book = books[index],
-                            onClick = { navController.navigateToBookDetail(books[index].id) },
-                            isFavorite = viewModel.isFavorite(books[index].id),
-                            onFavoriteClick = { viewModel.toggleFavorite(books[index]) },
+                            book = book,
+                            onClick = {
+                                navController.navigateToBookDetail(book)
+                            },
+                            isFavorite = viewModel.isFavorite(book.id),
+                            onFavoriteClick = { viewModel.toggleFavorite(book) },
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
                 }
+
             }
         }
     }

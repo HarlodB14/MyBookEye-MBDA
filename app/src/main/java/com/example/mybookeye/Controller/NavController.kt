@@ -3,6 +3,8 @@ package com.example.mybookeye.Controller
 
 import android.content.Context
 import androidx.navigation.NavHostController
+import com.example.mybookeye.Model.Book
+import com.example.mybookeye.Model.SelectedBookHolder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import androidx.navigation.NavController as AndroidXNavController
@@ -16,11 +18,10 @@ class NavController(private val navController: AndroidXNavController) {
         }
     }
 
-    fun navigateToBookDetail(bookId: String) {
-        val cleanId = bookId.removePrefix("/")  // Remove leading slash if needed
-        val encodedId =
-            URLEncoder.encode(cleanId, StandardCharsets.UTF_8.toString())  // Encode the book ID
-        navController.navigate("detail/$encodedId")
+    fun navigateToBookDetail(book: Book) {
+        SelectedBookHolder.selectedBook = book
+        val encodedBookId = URLEncoder.encode(book.id, StandardCharsets.UTF_8.toString())
+        navController.navigate("detail/$encodedBookId")
     }
 
     fun navigateToFavorites() {

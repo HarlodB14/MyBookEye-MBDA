@@ -50,7 +50,7 @@ import com.example.mybookeye.Service.BookService
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
-    bookId: String,
+    bookId: String,  // Now we receive the bookId
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -59,10 +59,10 @@ fun BookDetailScreen(
     var book by remember { mutableStateOf<Book?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
 
-    //details ophalen van boek
+    // Fetch the book details based on bookId when the screen is first displayed
     LaunchedEffect(bookId) {
         BookService.fetchBooks(context) { books ->
-            book = books.find { it.id == bookId }
+            book = books.find { it.id == bookId }  // Use the bookId to find the book
             if (book == null) {
                 error = "Book details not found"
             }
@@ -72,25 +72,20 @@ fun BookDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Book Details") },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateToBookList() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { isFavorite = !isFavorite }) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
-                        )
-                    }
+            TopAppBar(title = { Text("Book Details") }, navigationIcon = {
+                IconButton(onClick = { navController.navigateToBookList() }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
-            )
-        }
-    ) { padding ->
+            }, actions = {
+                IconButton(onClick = { isFavorite = !isFavorite }) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            })
+        }) { padding ->
         when {
             isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -114,15 +109,12 @@ fun BookDetailScreen(
                     // Book Cover
                     Card(modifier = Modifier.fillMaxWidth()) {
                         AsyncImage(
-                            model = ImageRequest.Builder(context)
-                                .data(
+                            model = ImageRequest.Builder(context).data(
                                     book?.coverUrl?.replace(
-                                        "-M.jpg",
-                                        "-L.jpg"
+                                        "-M.jpg", "-L.jpg"
                                     )
                                 ) // Use larger image
-                                .crossfade(true)
-                                .build(),
+                                .crossfade(true).build(),
                             contentDescription = "Book cover",
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
@@ -161,12 +153,10 @@ fun BookDetailScreen(
                         Button(
                             onClick = {
                                 val intent = Intent(
-                                    Intent.ACTION_VIEW,
-                                    "https://openlibrary.org${book?.id}".toUri()
+                                    Intent.ACTION_VIEW, "https://openlibrary.org${book?.id}".toUri()
                                 )
                                 context.startActivity(intent)
-                            },
-                            modifier = Modifier.weight(1f)
+                            }, modifier = Modifier.weight(1f)
                         ) {
                             Text("View Online")
                         }
@@ -174,8 +164,7 @@ fun BookDetailScreen(
                         Spacer(modifier = Modifier.size(16.dp))
 
                         Button(
-                            onClick = { isFavorite = !isFavorite },
-                            modifier = Modifier.weight(1f)
+                            onClick = { isFavorite = !isFavorite }, modifier = Modifier.weight(1f)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(

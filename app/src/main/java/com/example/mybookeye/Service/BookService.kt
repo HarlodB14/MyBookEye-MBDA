@@ -7,12 +7,9 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.mybookeye.DAL.FavoritesRepository
 import com.example.mybookeye.Model.Book
-import kotlinx.coroutines.Job
 import java.net.URLEncoder
 
 object BookService {
-    //main zoek en feautred boeken methode
-    private var searchJob: Job? = null
     private fun fetchBookData(
         context: Context,
         url: String,

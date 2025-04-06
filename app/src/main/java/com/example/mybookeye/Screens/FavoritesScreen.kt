@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mybookeye.Controller.NavController
+import com.example.mybookeye.Model.Book
 import com.example.mybookeye.Viewmodel.BookViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,18 +59,18 @@ fun FavoritesScreen(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                items(
-                    items = favoriteBooks,
-                    key = { book -> book.id }  // Use book.id as unique key
-                ) { book ->
+                (items(
+                    items = favoriteBooks.toList(),
+                    key = { book: Book -> book.id }
+                ) { book: Book ->
                     BookRow(
                         book = book,
-                        onClick = { navController.navigateToBookDetail("book_detail/${book.id}") },
+                        onClick = { navController.navigateToBookDetail(book) },
                         isFavorite = true,
                         onFavoriteClick = { viewModel.toggleFavorite(book) },
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
-                }
+                })
             }
         }
     }

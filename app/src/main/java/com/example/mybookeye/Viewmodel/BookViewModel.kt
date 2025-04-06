@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mybookeye.DAL.FavoritesRepository
 import com.example.mybookeye.Model.Book
 import com.example.mybookeye.Service.BookService
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +21,22 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
     val searchQuery = mutableStateOf("")
     private var searchJob: Job? = null
 
-    private val _favorites = MutableStateFlow<List<Book>>(emptyList())
+    private val _favorites = MutableStateFlow<Set<Book>>(emptySet())
     val favorites = _favorites.asStateFlow()
+
+    fun toggleFavorite(book: Book) {
+        _favorites.value = if (_favorites.value.any { it.id == book.id }) {
+            _favorites.value.filterNot { it.id == book.id }.toSet()
+        } else {
+            _favorites.value + book
+        }
+        FavoritesRepository.saveFavorites(getApplication(), book)
+    }
+
+
+    init {
+        loadFavorites()
+    }
 
     fun loadBooks() {
         isLoading.value = true
@@ -33,6 +48,11 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
+    private fun loadFavorites() {
+        _favorites.value = FavoritesRepository.getFavorites(getApplication())
+    }
+
 
     fun searchBooks(query: String) {
         searchQuery.value = query
@@ -51,14 +71,6 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun toggleFavorite(book: Book) {
-        _favorites.value = if (_favorites.value.any { it.id == book.id }) {
-            _favorites.value.filterNot { it.id == book.id }
-        } else {
-            _favorites.value + book
-        }
-        BookService.saveFavorite(getApplication(), book)
-    }
 
     fun isFavorite(bookId: String): Boolean {
         return _favorites.value.any { it.id == bookId }
