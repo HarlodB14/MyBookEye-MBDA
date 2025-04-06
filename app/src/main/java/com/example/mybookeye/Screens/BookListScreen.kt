@@ -156,9 +156,8 @@ fun BookListScreen(navController: NavController) {
             }
 
             else -> {
-                // Using books directly (which is a List<Book>)
                 LazyColumn(contentPadding = padding) {
-                    items(books.size) { book ->  // Directly pass the List<Book> to items()
+                    items(books.size) { book ->
                         BookRow(
                             book = books[book],
                             onClick = {
