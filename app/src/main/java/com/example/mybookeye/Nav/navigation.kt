@@ -21,7 +21,7 @@ fun Navigation(navController: NavController) {
         composable("booklist") { BookListScreen(navController) }
         composable("detail/{bookId}") { backStackEntry ->
             val bookId = backStackEntry.arguments?.getString("bookId") ?: ""
-            BookDetailScreen(bookId, navController)
+            BookDetailScreen("/$bookId", navController)
         }
         composable("settings") { SettingsScreen(navController) }
     }
