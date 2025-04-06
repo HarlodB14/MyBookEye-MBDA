@@ -47,7 +47,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.mybookeye.Controller.NavController
 import com.example.mybookeye.Model.Book
-import com.example.mybookeye.Model.SelectedBookHolder
 import com.example.mybookeye.R
 import com.example.mybookeye.Viewmodel.BookViewModel
 
@@ -126,13 +125,6 @@ fun BookListScreen(navController: NavController) {
                 }
             )
         },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = { navController.navigateToSearch() },
-                icon = { Icon(Icons.Default.Search, "Search") },
-                text = { Text("Advanced Search") }
-            )
-        }
     ) { padding ->
         when {
             viewModel.isLoading.value -> {
@@ -164,27 +156,30 @@ fun BookListScreen(navController: NavController) {
             }
 
             else -> {
+                // Using books directly (which is a List<Book>)
                 LazyColumn(contentPadding = padding) {
-                    items(books.size) { index ->
-                        val book = books[index]
+                    items(books.size) { book ->  // Directly pass the List<Book> to items()
                         BookRow(
-                            book = book,
+                            book = books[book],
                             onClick = {
-                                navController.navigateToBookDetail(book)
+                                navController.navigateToBookDetail(books[book])
                             },
-                            isFavorite = viewModel.isFavorite(book.id),
-                            onFavoriteClick = { viewModel.toggleFavorite(book) },
+                            isFavorite = viewModel.isFavorite(books[book].id),
+                            onFavoriteClick = {
+                                viewModel.toggleFavorite(
+                                    navController.context,
+                                    books[book]
+                                )
+                            },
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                     }
                 }
-
             }
         }
     }
-
-
 }
+
 
 @Composable
 fun BookRow(
@@ -233,7 +228,7 @@ fun BookRow(
             }
 
             IconButton(
-                onClick = { onFavoriteClick },
+                onClick = { onFavoriteClick() },  // Add parentheses to invoke the function
                 modifier = Modifier.padding(start = 8.dp),
                 enabled = true,
                 colors = IconButtonDefaults.iconButtonColors(),

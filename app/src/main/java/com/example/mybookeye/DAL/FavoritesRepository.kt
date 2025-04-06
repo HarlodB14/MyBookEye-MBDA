@@ -11,7 +11,7 @@ object FavoritesRepository {
     private const val FAVORITES_KEY = "favorites_list"
     private val gson = Gson()
 
-    fun saveFavorites(context: Context, favorites: Book) {
+    fun saveFavorites(context: Context, favorites: MutableSet<Book>) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val json = gson.toJson(favorites)
         prefs.edit() { putString(FAVORITES_KEY, json) }
@@ -39,6 +39,6 @@ object FavoritesRepository {
         } else {
             favorites.add(book)
         }
-        saveFavorites(context, book)
+        saveFavorites(context, favorites)
     }
 }

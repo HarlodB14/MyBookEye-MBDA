@@ -67,7 +67,7 @@ fun FavoritesScreen(
                         book = book,
                         onClick = { navController.navigateToBookDetail(book) },
                         isFavorite = true,
-                        onFavoriteClick = { viewModel.toggleFavorite(book) },
+                        onFavoriteClick = { viewModel.toggleFavorite(navController.context,book) },
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 })
