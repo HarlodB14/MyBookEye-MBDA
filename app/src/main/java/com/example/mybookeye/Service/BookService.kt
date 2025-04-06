@@ -6,7 +6,7 @@ import com.android.volley.toolbox.JsonObjectRequest
 import com.android.volley.toolbox.Volley
 import com.example.mybookeye.Model.Book
 
-object BookSerivce {
+object BookService {
     fun fetchBooks(context: Context, onResult: (List<Book>) -> Unit) {
         val queue = Volley.newRequestQueue(context)
         val url = "https://openlibrary.org/search.json?q=android"

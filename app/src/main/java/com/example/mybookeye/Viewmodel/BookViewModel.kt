@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mybookeye.Model.Book
-import com.example.mybookeye.Service.BookSerivce
+import com.example.mybookeye.Service.BookService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -14,7 +14,7 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadBooks() {
         viewModelScope.launch(Dispatchers.IO) {
-            BookSerivce.fetchBooks(getApplication()) {
+            BookService.fetchBooks(getApplication()) {
                 books.clear()
                 books.addAll(it)
             }
