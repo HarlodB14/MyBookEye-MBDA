@@ -2,7 +2,6 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import com.example.mybookeye.R
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -45,7 +44,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.mybookeye.Controller.NavController
 import com.example.mybookeye.Model.Book
-import  com.example.mybookeye.Service.BookService
+import com.example.mybookeye.R
+import com.example.mybookeye.Service.BookService
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

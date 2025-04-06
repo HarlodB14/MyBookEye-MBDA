@@ -23,6 +23,10 @@ class NavController(private val navController: AndroidXNavController) {
         navController.navigate("detail/$encodedId")
     }
 
+    fun navigateToFavorites() {
+        navController.navigate("favorites")
+    }
+
     fun navigateToSettings() {
         navController.navigate("settings")
     }
@@ -32,4 +36,7 @@ class NavController(private val navController: AndroidXNavController) {
     }
 
     fun getAndroidXNavController(): NavHostController = navController as NavHostController
+    fun navigateToSearch() {
+        navController.navigate("search")
+    }
 }
