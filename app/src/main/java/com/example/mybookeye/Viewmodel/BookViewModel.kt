@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mybookeye.DAL.FavoritesRepository
 import com.example.mybookeye.DAL.FavoritesRepository.getFavorites
 import com.example.mybookeye.DAL.FavoritesRepository.saveFavorites
 import com.example.mybookeye.Model.Book
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class BookViewModel(application: Application) : AndroidViewModel(application) {
@@ -25,6 +27,13 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _favorites = MutableStateFlow<Set<Book>>(emptySet())
     val favorites = _favorites.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _favorites.collectLatest {
+            }
+        }
+    }
 
     fun toggleFavorite(context: Context, book: Book) {
         val favorites = getFavorites(context).toMutableSet()
@@ -48,8 +57,10 @@ class BookViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun loadFavorites() {
-        _favorites.value = getFavorites(getApplication())
+    fun loadFavorites(context: Context) {
+        viewModelScope.launch {
+            _favorites.value = getFavorites(context)
+        }
     }
 
 

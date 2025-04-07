@@ -52,7 +52,7 @@ fun FavoritesScreen(
                     .padding(padding),
                 contentAlignment = Alignment.Center
             ) {
-                Text("No favorite books yet")
+                Text("No favorite books added yet")
             }
         } else {
             LazyColumn(

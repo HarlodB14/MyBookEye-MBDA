@@ -15,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -24,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +52,7 @@ import com.example.mybookeye.Service.BookService
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BookDetailScreen(
-    bookId: String,  // Now we receive the bookId
+    bookId: String,
     navController: NavController
 ) {
     val context = LocalContext.current
@@ -58,11 +60,12 @@ fun BookDetailScreen(
     var isFavorite by remember { mutableStateOf(false) }
     var book by remember { mutableStateOf<Book?>(null) }
     var error by remember { mutableStateOf<String?>(null) }
+    var showBrowserPermissionDialog by remember { mutableStateOf(false) }
+    var urlToOpen by remember { mutableStateOf("") }
 
-    // Fetch the book details based on bookId when the screen is first displayed
     LaunchedEffect(bookId) {
         BookService.fetchBooks(context) { books ->
-            book = books.find { it.id == bookId }  // Use the bookId to find the book
+            book = books.find { it.id == bookId }
             if (book == null) {
                 error = "Book details not found"
             }
@@ -72,20 +75,25 @@ fun BookDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Book Details") }, navigationIcon = {
-                IconButton(onClick = { navController.navigateToBookList() }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            TopAppBar(
+                title = { Text("Book Details") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateToBookList() }) {
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { isFavorite = !isFavorite }) {
+                        Icon(
+                            imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Favorite",
+                            tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
-            }, actions = {
-                IconButton(onClick = { isFavorite = !isFavorite }) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (isFavorite) Color.Red else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            })
-        }) { padding ->
+            )
+        }
+    ) { padding ->
         when {
             isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -109,12 +117,10 @@ fun BookDetailScreen(
                     // Book Cover
                     Card(modifier = Modifier.fillMaxWidth()) {
                         AsyncImage(
-                            model = ImageRequest.Builder(context).data(
-                                    book?.coverUrl?.replace(
-                                        "-M.jpg", "-L.jpg"
-                                    )
-                                ) // Use larger image
-                                .crossfade(true).build(),
+                            model = ImageRequest.Builder(context)
+                                .data(book?.coverUrl?.replace("-M.jpg", "-L.jpg"))
+                                .crossfade(true)
+                                .build(),
                             contentDescription = "Book cover",
                             contentScale = ContentScale.Fit,
                             modifier = Modifier
@@ -152,11 +158,10 @@ fun BookDetailScreen(
                     ) {
                         Button(
                             onClick = {
-                                val intent = Intent(
-                                    Intent.ACTION_VIEW, "https://openlibrary.org${book?.id}".toUri()
-                                )
-                                context.startActivity(intent)
-                            }, modifier = Modifier.weight(1f)
+                                urlToOpen = "https://openlibrary.org${book?.id}"
+                                showBrowserPermissionDialog = true
+                            },
+                            modifier = Modifier.weight(1f)
                         ) {
                             Text("View Online")
                         }
@@ -164,7 +169,8 @@ fun BookDetailScreen(
                         Spacer(modifier = Modifier.size(16.dp))
 
                         Button(
-                            onClick = { isFavorite = !isFavorite }, modifier = Modifier.weight(1f)
+                            onClick = { isFavorite = !isFavorite },
+                            modifier = Modifier.weight(1f)
                         ) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
@@ -180,5 +186,36 @@ fun BookDetailScreen(
                 }
             }
         }
+    }
+
+    // Browser Permission Dialog
+    if (showBrowserPermissionDialog) {
+        AlertDialog(
+            onDismissRequest = { showBrowserPermissionDialog = false },
+            title = { Text("Open in Browser") },
+            text = { Text("Do you want to open this book in your web browser?") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showBrowserPermissionDialog = false
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, urlToOpen.toUri())
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            error = "No browser available or unable to open link"
+                        }
+                    }
+                ) {
+                    Text("Open")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showBrowserPermissionDialog = false }
+                ) {
+                    Text("Cancel")
+                }
+            }
+        )
     }
 }

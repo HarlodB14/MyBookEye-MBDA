@@ -11,19 +11,21 @@ object FavoritesRepository {
     private const val FAVORITES_KEY = "favorites_list"
     private val gson = Gson()
 
-    fun saveFavorites(context: Context, favorites: MutableSet<Book>) {
+    fun saveFavorites(context: Context, favorites: Set<Book>) {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val json = gson.toJson(favorites)
-        prefs.edit() { putString(FAVORITES_KEY, json) }
+        val json = gson.toJson(favorites.toList())
+        prefs.edit { putString(FAVORITES_KEY, json) }
     }
 
     fun getFavorites(context: Context): Set<Book> {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        val json = prefs.getString(FAVORITES_KEY, null)
-        return if (json != null) {
-            val type = object : TypeToken<Set<Book>>() {}.type
-            gson.fromJson(json, type) ?: emptySet()
-        } else {
+        val json = prefs.getString(FAVORITES_KEY, null) ?: return emptySet()
+
+        return try {
+            val type = object : TypeToken<List<Book>>() {}.type
+            gson.fromJson<List<Book>>(json, type).toSet()
+        } catch (e: Exception) {
+            prefs.edit { remove(FAVORITES_KEY) }
             emptySet()
         }
     }

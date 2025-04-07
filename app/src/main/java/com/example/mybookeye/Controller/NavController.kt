@@ -25,7 +25,10 @@ class NavController(private val navController: AndroidXNavController) {
     }
 
     fun navigateToFavorites() {
-        navController.navigate("favorites")
+        navController.navigate("favorites") {
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 
     fun navigateToSettings() {

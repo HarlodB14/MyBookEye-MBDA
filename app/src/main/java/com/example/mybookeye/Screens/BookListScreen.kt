@@ -1,5 +1,4 @@
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,10 +18,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,6 +46,9 @@ import com.example.mybookeye.Controller.NavController
 import com.example.mybookeye.Model.Book
 import com.example.mybookeye.R
 import com.example.mybookeye.Viewmodel.BookViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -61,6 +61,7 @@ fun BookListScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         viewModel.loadBooks()
+        viewModel.loadFavorites(navController.context)
     }
 
     Scaffold(
@@ -227,11 +228,12 @@ fun BookRow(
             }
 
             IconButton(
-                onClick = { onFavoriteClick() },  // Add parentheses to invoke the function
-                modifier = Modifier.padding(start = 8.dp),
-                enabled = true,
-                colors = IconButtonDefaults.iconButtonColors(),
-                interactionSource = remember { MutableInteractionSource() }
+                onClick = {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        onFavoriteClick()
+                    }
+                },
+                modifier = Modifier.padding(start = 8.dp)
             ) {
                 Icon(
                     imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Outlined.FavoriteBorder,
